@@ -4,7 +4,7 @@ import Board from '../Board/Board'
 import Ball from '../Ball/Ball'
 import './GameField.scss'
 import space_1 from './space_1.jpg'
-import { animateMoveLeft, animateMovement, animateMoveRight, setCoords } from '../../animations/boardAnimation'
+import { animateMoveLeft, animateMovement, animateMoveRight, boardMovingStep, setCoords } from '../../animations/boardAnimation'
 
 export default function GameField() {
 

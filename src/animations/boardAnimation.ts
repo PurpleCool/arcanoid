@@ -11,7 +11,7 @@ export function setCoords (coords: ICoords, setter: any) {
 	};
 }
 
-let boardMovingStep: number = 0;
+export let boardMovingStep: number = 0;
 setBoardMovingStep();
 
 let boardCoords: ICoords = Coords(0, 0, 0, 0);
@@ -24,7 +24,7 @@ export function setBoardMovingStep(value: number = 10): number {
 }
 
 export function moveBoardRight(step: number = boardMovingStep): void {
-	// debugger	
+	console.log(step)	;
 	let newX2: number = boardCoords.x2 + step;
 	let gameFieldWidth: number = document.getElementsByClassName('game-field')[0]?.clientWidth || 0;
 
@@ -40,7 +40,7 @@ export function moveBoardLeft(step: number = boardMovingStep):void {
 	coordsSetter(coords);
 }
 
-export function animateMoveRight(step?: number): void {
+export function animateMoveRight(step: number = boardMovingStep): void {
 	animate(
 		{
 			timing: timeFraction => timeFraction,
@@ -50,7 +50,7 @@ export function animateMoveRight(step?: number): void {
 	);
 }
 
-export function animateMoveLeft(step?: number): void {
+export function animateMoveLeft(step: number = boardMovingStep): void {
 	// debugger
 	animate(
 		{
