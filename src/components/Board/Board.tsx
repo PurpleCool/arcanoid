@@ -1,27 +1,26 @@
-import React, { FC } from 'react'
-import { IBoardCoords } from '../../types/types'
+import React, { FC, useEffect } from 'react'
+import { RootStateOrAny, useSelector } from 'react-redux';
+import { ICoords } from '../../types/types'
 import './Board.scss'
 
 interface BoardProps {
-	coords: IBoardCoords,
-	boardWidth: number
+	coords: ICoords,
 }
 
-const Board: FC<BoardProps> = ({ coords, boardWidth = 150 }) => {
+const Board: FC<BoardProps> = ({ coords }) => {
+	useEffect(() => {
+		// effect
+		// return () => {
+			// cleanup
+		// }
+	}, [coords])
 
-	const {x, y} = coords;
-
-	function getRectY() {
-		return y - 50;
-	}
-
-	const boardHeight = 20;
 
 	return (
-		<rect className='board' x={x - boardWidth / 2} y={getRectY()}
-			width={boardWidth} height={boardHeight}
-			rx={boardHeight / 2} ry={boardHeight / 2}/>
-			// rx="15" ry="50%"/>
+		<rect className='board' x={coords.x1} y={coords.y1}
+			width={coords.width} height={coords.height}
+			rx={coords.height / 2} ry={coords.height / 2}
+		/>
 	);
 }
 

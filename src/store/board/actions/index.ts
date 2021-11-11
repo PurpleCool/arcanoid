@@ -1,0 +1,1 @@
+export const SET_BOARD_COORDS = 'SET_BOARD_COORDS';
