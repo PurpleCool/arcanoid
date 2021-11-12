@@ -1,4 +1,5 @@
-import { Coords, ICoords } from "../../types/types";
+import { ICoords } from "src/types/types";
+import { Coords } from "src/utils";
 import { SET_BOARD_COORDS } from "./actions";
 
 interface IBoardState {

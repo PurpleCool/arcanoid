@@ -1,4 +1,4 @@
-import { Coords, ICoords } from "../../../types/types";
+import { ICoords } from "src/types/types";
 import { SET_BOARD_COORDS } from "../actions";
 
 export function setBoardCoords(coords: ICoords) {

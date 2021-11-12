@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { ICoords } from '../../types/types'
 import './Ball.scss'
 

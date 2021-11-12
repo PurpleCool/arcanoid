@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Coords, ICoords } from '../../types/types'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import Board from '../Board/Board'
 import Ball from '../Ball/Ball'
 import './GameField.scss'
 import space_1 from './space_1.jpg'
-import { animateMoveLeft, animateMovement, animateMoveRight, boardMovingStep, setCoords } from '../../animations/boardAnimation'
+import { BoardAnimation } from '../../animations/BoardAnimation'
+import { Coords } from 'src/utils'
+import { ICoords } from 'src/types/types'
+import { BallAnimation } from 'src/animations/BallAnimation'
 
 export default function GameField() {
 
@@ -18,22 +20,39 @@ export default function GameField() {
 
 	const [ballCoords, setBallCoords] = useState<ICoords>(getBallPosition());
 	const [boardCoords, setBoardCoords] = useState<ICoords>(getBoardPosition());
+	// const [boardAnimation, setBoardAnimation] = useState<BoardAnimation>(new BoardAnimation(boardCoords, setBoardCoords));
+	// const [ballAnimation, setBallAnimation] = useState<BallAnimation>(new BallAnimation(ballCoords, setBallCoords));
 
-	let boardMoveTimer: number | null = null;
-	let isBoardMoving: boolean = false;
-	
-	useEffect(() => {
-		document.addEventListener('keydown', keyDownHandler);
-		
-		let coords = getBoardPosition();
-		setBoardCoords(coords)
-		setBallCoords(getBallPosition());
-		setCoords( coords, (coords: ICoords) => setBoardCoords(prev => coords) );
+	const boardAnimation: BoardAnimation = new BoardAnimation(boardCoords, setBoardCoords);
+	const ballAnimation: BallAnimation   = new BallAnimation(ballCoords, setBallCoords);
+
+	useLayoutEffect(() => {
+		function doStuff(): void {
+			document.addEventListener('keydown', keyDownHandler);
+			
+			let boardPosition = getBoardPosition();
+			let ballPosition = getBallPosition();
+
+			setBoardCoords(boardPosition)
+			setBallCoords(ballPosition);
+
+			boardAnimation.setCoords( boardPosition, (coords: ICoords) => setBoardCoords(prev => coords) );
+			ballAnimation.setCoords( ballPosition, (coords: ICoords) => setBallCoords(prev => coords) );
+
+
+			let timerId = setTimeout(() => {
+				clearTimeout(timerId);
+				ballAnimation.animateMovement();
+			}, 1000);
+		}
+
+		doStuff();
 
 		return () => {
 			document.removeEventListener('keydown', keyDownHandler);
 		}
-	}, [gameFieldRef])
+	}, [gameFieldRef]);
+
 
 	function getBoardPosition(): ICoords {
 		let x1:number = gameFieldRef.current?.clientWidth || 0;
@@ -41,7 +60,6 @@ export default function GameField() {
 
 		if (x1) x1 = Math.abs(x1 / 2) - boardWidth / 2;
 		if (y1 && y1 > 50) y1 -= 50;
-
 	
 		return Coords(x1, y1, x1 + boardWidth, y1 + boardHeight);
 	}
@@ -58,45 +76,22 @@ export default function GameField() {
 
 	function keyDownHandler(event: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>): void {
 		if (event.key === 'ArrowRight') {
-			animateMoveRight();
+			boardAnimation.animateMoveRight();
 		} else if (event.key === 'ArrowLeft') {
-			animateMoveLeft();
+			boardAnimation.animateMoveLeft();
 		}
 	}
 
-	function mouseMoveHandler (event: MouseEvent | React.MouseEvent<HTMLDivElement>): void {
-		let timerId: ReturnType<typeof setTimeout>;
-
-		function doStuff() {
-			// debugger
-			clearTimeout(timerId)
-			if (boardMoveTimer) clearTimeout(boardMoveTimer);
-
-			console.group();
-				console.log(boardCoords.xCenter);
-	
-			if (Math.abs(boardCoords.xCenter - event.screenX) > 3) {
-				// debugger
-				animateMovement(boardCoords.xCenter, event.screenX);
-			}
-				console.log(event.screenX);
-				console.log(boardCoords.xCenter);
-			console.groupEnd();
-	
-			if (!isBoardMoving) gameFieldRef.current?.removeEventListener('mousemove', mouseMoveHandler);
-		}
-
-		doStuff()
-	
+	function moveBoard (event: MouseEvent | React.MouseEvent<HTMLDivElement>): void {
+		boardAnimation.animateMovement(boardCoords.xCenter, event.screenX);
 	}
-
 
 	return (
 		<div 
 			ref={gameFieldRef}
 			className='game-field'
-			// onMouseMove={mouseMoveHandler}
-			onMouseDown={mouseMoveHandler}
+			// onMouseMove={moveBoard}
+			onMouseDown={moveBoard}
 			>
 			<svg className='field'>
 				<image className='field-image' xlinkHref={space_1} height="2160" width="3840" />

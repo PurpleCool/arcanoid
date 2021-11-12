@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react'
-import { RootStateOrAny, useSelector } from 'react-redux';
 import { ICoords } from '../../types/types'
 import './Board.scss'
 
@@ -9,10 +8,6 @@ interface BoardProps {
 
 const Board: FC<BoardProps> = ({ coords }) => {
 	useEffect(() => {
-		// effect
-		// return () => {
-			// cleanup
-		// }
 	}, [coords])
 
 
