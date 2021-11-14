@@ -1,4 +1,5 @@
 // import { ICoords } from "src/types/types";
+import { GAME_ELEMENTS } from "src/const";
 import { Coords } from "src/utils";
 import { animate } from ".";
 import { BasicAnimation } from "./Animation";
@@ -9,8 +10,10 @@ export class BoardAnimation extends BasicAnimation {
 	// }
 	
 	moveRight(step: number = this.movingStep): void {
-		console.log(step)	;
-		let newX2: number = this.coords.x2 + step;
+		// let newX2: number = this.coords.x2 + step;
+		let bbox = GAME_ELEMENTS.board?.getBBox() || new SVGRect();
+		let newX2: number = Math.max( (bbox.x + bbox.width) + step, 0);
+
 		let gameFieldWidth: number = document.getElementsByClassName('game-field')[0]?.clientWidth || 0;
 
 		if (gameFieldWidth && newX2 > gameFieldWidth) newX2 = gameFieldWidth;
@@ -20,7 +23,10 @@ export class BoardAnimation extends BasicAnimation {
 	}
 
 	moveLeft(step: number = this.movingStep):void {		
-		const newX1: number = Math.max(this.coords.x1 - step, 0);
+		// const newX1: number = Math.max(this.coords.x1 - step, 0);
+
+		let bbox = GAME_ELEMENTS.board?.getBBox() || new SVGRect();
+		const newX1: number = Math.max(bbox.x - step, 0);
 		const coords = Coords(newX1, this.coords.y1, newX1 + this.coords.width, this.coords.y2);
 		this.coordsSetter(coords);
 	}
@@ -45,10 +51,11 @@ export class BoardAnimation extends BasicAnimation {
 		);
 	}
 
-	animateMovement(x: number, compareX: number): void {
-		let diff = Math.abs(x - compareX);
+	// animateMovement(x: number, compareX1: number): void {
+	animateMovement(compareX1: number): void {
+		let diff = Math.abs(this.coords.x1 - compareX1);
 		let step = Math.min( this.movingStep, diff );
-		if (x < compareX) {
+		if (this.coords.x1 < compareX1) {
 			this.animateMoveRight(step)
 		} else {
 			this.animateMoveLeft(step);

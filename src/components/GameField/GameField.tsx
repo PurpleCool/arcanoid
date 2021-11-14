@@ -7,10 +7,12 @@ import { BoardAnimation } from '../../animations/BoardAnimation'
 import { Coords } from 'src/utils'
 import { ICoords } from 'src/types/types'
 import { BallAnimation } from 'src/animations/BallAnimation'
+import { PathTracker } from 'src/animations/PathTracker'
+import { GAME_ELEMENTS, GAME_ELEMENTS_BBOX } from 'src/const'
 
 export default function GameField() {
 
-	const gameFieldRef = useRef<HTMLDivElement>(null);
+	const gameFieldRef = useRef<SVGSVGElement>(null);
 
 	const boardWidth: number = 150;
 	const boardHeight: number = 20;
@@ -20,29 +22,36 @@ export default function GameField() {
 
 	const [ballCoords, setBallCoords] = useState<ICoords>(getBallPosition());
 	const [boardCoords, setBoardCoords] = useState<ICoords>(getBoardPosition());
-	// const [boardAnimation, setBoardAnimation] = useState<BoardAnimation>(new BoardAnimation(boardCoords, setBoardCoords));
-	// const [ballAnimation, setBallAnimation] = useState<BallAnimation>(new BallAnimation(ballCoords, setBallCoords));
 
 	const boardAnimation: BoardAnimation = new BoardAnimation(boardCoords, setBoardCoords);
 	const ballAnimation: BallAnimation   = new BallAnimation(ballCoords, setBallCoords);
+	
+	let pathTracker: PathTracker;
 
 	useLayoutEffect(() => {
 		function doStuff(): void {
 			document.addEventListener('keydown', keyDownHandler);
+
+			if (gameFieldRef.current) {
+				GAME_ELEMENTS.gameField = gameFieldRef.current;
+				GAME_ELEMENTS_BBOX.gameField = gameFieldRef.current.getBBox();
+			}
 			
 			let boardPosition = getBoardPosition();
 			let ballPosition = getBallPosition();
 
+			// debugger
 			setBoardCoords(boardPosition)
 			setBallCoords(ballPosition);
 
 			boardAnimation.setCoords( boardPosition, (coords: ICoords) => setBoardCoords(prev => coords) );
 			ballAnimation.setCoords( ballPosition, (coords: ICoords) => setBallCoords(prev => coords) );
 
+			pathTracker = new PathTracker(boardAnimation, ballAnimation);
 
 			let timerId = setTimeout(() => {
 				clearTimeout(timerId);
-				ballAnimation.animateMovement();
+				pathTracker.startGame();
 			}, 1000);
 		}
 
@@ -83,17 +92,17 @@ export default function GameField() {
 	}
 
 	function moveBoard (event: MouseEvent | React.MouseEvent<HTMLDivElement>): void {
-		boardAnimation.animateMovement(boardCoords.xCenter, event.screenX);
+		// boardAnimation.animateMovement(boardCoords.xCenter, event.clientX);
+		boardAnimation.animateMovement(event.clientX);
 	}
 
 	return (
 		<div 
-			ref={gameFieldRef}
 			className='game-field'
 			// onMouseMove={moveBoard}
 			onMouseDown={moveBoard}
 			>
-			<svg className='field'>
+			<svg ref={gameFieldRef} className='field'>
 				<image className='field-image' xlinkHref={space_1} height="2160" width="3840" />
 				<Board coords={boardCoords} />
 				<Ball coords={ballCoords} />

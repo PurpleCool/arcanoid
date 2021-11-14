@@ -19,3 +19,19 @@ export interface IAnimateParams {
 	draw(progress: number, animationId: number | null): void | boolean;
 	duration?: number,
 }
+
+export interface ISVGElements {
+  [index: string]: any;
+}
+
+export interface IGameElements {
+	gameField: SVGSVGElement | null,
+	board: SVGRectElement | null,
+	ball: SVGRectElement | null,
+}
+
+export interface IGameElementsBBOX {
+	gameField: SVGRect | null,
+	board: SVGRect | null,
+	ball: SVGRect | null,
+}
