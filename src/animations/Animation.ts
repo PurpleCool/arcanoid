@@ -6,8 +6,8 @@ coords: ICoords;
 	coordsSetter(value: ICoords): void {};
 	movingStep: number;
 
-
 	constructor(coords: ICoords, setter?: any) {
+		console.log('[Animation][constructor]');
 		this.coords = Coords(0, 0, 0, 0);
 		this.coordsSetter = (value) => {};
 		

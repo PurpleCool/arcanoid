@@ -9,6 +9,7 @@ export class BoardAnimation extends BasicAnimation {
 	// 	super(coords, setter);
 	// }
 	
+	
 	moveRight(step: number = this.movingStep): void {
 		// let newX2: number = this.coords.x2 + step;
 		let bbox = GAME_ELEMENTS.board?.getBBox() || new SVGRect();
